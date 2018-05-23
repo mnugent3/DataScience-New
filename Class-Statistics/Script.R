@@ -54,7 +54,10 @@ plot(effect_size)
 #choose test
 #choose pwr function for test
 
+#CA3
 
+#B0 and BJ is the outcome of R
+#
 
 students <- pwr.p.test(h = ES.h(p1 = 0.55, p2 = 0.50), #P1 alternative hypothesis and p2 is the null hypothesis
                             sig.level = 0.05,

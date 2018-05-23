@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{DA7A21FA-8162-4350-AD77-A8D1B671F3ED}") = "Get_and_clean_data", "Get_and_clean_data.rxproj", "{6A7A4B50-477D-4CBE-ABC1-2BEB7571ED83}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A7A4B50-477D-4CBE-ABC1-2BEB7571ED83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A7A4B50-477D-4CBE-ABC1-2BEB7571ED83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A7A4B50-477D-4CBE-ABC1-2BEB7571ED83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A7A4B50-477D-4CBE-ABC1-2BEB7571ED83}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA85200A-73EE-452F-8ABA-414907178378}
+	EndGlobalSection
+EndGlobal

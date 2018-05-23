@@ -1,5 +1,5 @@
 
-#CA 2 - DATA ANALYSIS  - MONICA NUGENT - L00131284
+#CA 3 - DATA ANALYSIS  - MONICA NUGENT - L00131284
 
 #THERE ARE TWO DATASETS, EACH DATASET IS IMPORTED AND MANIPULATED TO MATCH EACH OTHER SO THAT THE TWO DATASETS CAN THEN BE MERGED
 
@@ -84,6 +84,79 @@ H1_table
 str(H1_table)
 chisq.test(H1_table) #chi square test performed on the random sample data as per power analysis resuts.
 
+# DATA ANALYSIS 
+
+# Build Multiple linear regression model using sample dataframe
+H1_table_sample #sample data for the multiple linear regression
+#fitting multiple linear model
+H1_Reg <- lm(formula = Before ~ During + After + During:After, data = H1_table_sample) 
+H1_Reg
+
+# Visualize interactions
+install.packages("effects")
+library(effects)
+plot(effect("During:After", H1_Reg), multiline = TRUE)
+
+# Correlations
+cor(H1_table_sample$Before, H1_table_sample$During) # results indicate that there is a high correlation between Before and During Admissions
+cor(H1_table_sample$During, H1_table_sample$After) # results indicate that it is not as highly correlated as Before and During Admissions
+
+# Multiple Linear regression diagnostics
+summary(H1_Reg) # Check if the model is statistically significant
+
+# P-value of After is >= to 0.05, therefore not statistically significant
+# The PR(>|t|) values indicate that the NULL Hypothesis is true due to it's high values.
+# Regression coefficient for During is 1.38, suggesting that an increase of 1% in During is associated with
+# 1.38 increase in Before and After.
+# Taken together, the predictor variables account for 92% of the variance in
+# Before rates across mental health related admissions.
+# Pr(>|t|) column that the interaction between During and After is
+# significant (the interaction between the predictor values says that the relationship
+# between one predictor and the response variable depends on the level of the
+# other predictor.
+# 24.11 Residual standard error is the average error in predicting Admission rates using this model
+
+plot(H1_Reg) #evaluate the model fit, it looks like we have 3 outliers, 51, 32 and 36
+
+# Goodness of Fit
+AIC(H1_Reg) # model has the lowest score (preferred model)
+BIC(H1_Reg)
+
+# Prediction accurate and error rates, when the actual values increase
+# the predicted values also increase and vice-versa
+All_Admissions_predict <- predict(H1_Reg, H1_table_sample)
+prediction <- data.frame(cbind(actuals = H1_table_sample$After, predicted = All_Admissions_predict))
+head(prediction)
+
+# Correlation Accuracy
+correlation_accuracy <- cor(prediction)
+correlation_accuracy # 51% correlation accuracy
+
+# Min - max accuracy (Higher the better)
+min_max_accuracy <- mean(apply(prediction, 1, min) / apply(prediction, 1, max))
+min_max_accuracy
+
+#MAPE (Lower the better), prediction accuracy and error rates to find out prediction accuracy of the model, 
+#Mean absolute percentage error.
+mape <- mean(abs((prediction$predicted - prediction$actuals)) / prediction$actuals)
+mape
+
+# Cross-Validation for Linear Regression function
+install.packages("DAAG")
+library(DAAG)
+cvResults <- suppressWarnings(CVlm(data = H1_table_sample, form.lm = Before ~ During, m = 5, dots = FALSE, seed = 5, legend.pos = "topleft", printit = FALSE, main = "Small symbols=predicted values::bigger=actuals."));
+attr(cvResults, 'ms')
+
+#Plot function for regression diagnostics
+fit <- lm(Before ~ During + After, data = H1_table_sample)
+plot(fit)
+
+#Global validation of linear model assumption
+install.packages("gvlma")
+library(gvlma)
+gvmodel <- gvlma(fit)
+summary(gvmodel)
+
 
 #HYPOTHESIS TEST 2
 #VSD30 subset Test wether suicide rates affected both, women or men more -> H3
@@ -107,6 +180,85 @@ H3_Totals <- as.table(as.matrix(H3_Tables)) # convert dataframe into a table so 
 H3_Totals
 str(H3_Totals)
 chisq.test(table(H3_Totals)) #chi square test performed on the random sample data as per power analysis results.
+
+# DATA ANALYSIS 
+
+# Visualise linear relationship between dependent variable and independent variable
+scatter.smooth(x = H3a$During, y = H3a$After, main = "During ~ After")
+#scatter plot shows that there is a linearly increasing relationship between 'During' and 'After'
+
+#Density Plot - response variable is close to normality?
+install.packages("e1071")
+library(e1071)
+#divide graph area in 2 columns
+par(mfrow = c(1, 2))
+#density plot for During
+plot(density(H3a$During), main = "Density Plot: During", ylab = "Admissions", sub = paste("Skewness:", round(e1071::skewness(H3a$During), 2)))
+polygon(density(H3a$During), col = "red")
+#density plot for After
+plot(density(H3a$After), main = "Density Plot: After", ylab = "Admissions", sub = paste("Skewness:", round(e1071::skewness(H3a$After), 2)))
+polygon(density(H3a$After), col = "red")
+
+# Correlations
+cor(H3a$Before, H3a$During) # results indicate that there is a high correlation between Before and During Admissions
+cor(H3a$During, H3a$After) # results indicate that it is not as highly correlated as Before and During Admissions
+
+# Build linear regression model using sample dataframe
+H3a #sample data for the linear regression
+H3a_Reg <- lm(formula = During ~ After, data = H3a) #fitting linear model
+H3a_Reg
+
+# Linear regression diagnostics
+summary(H3a_Reg) # Check if the model is statistically significant
+
+# P-value of After is < 0.05, therefore statistically significant
+# The PR(>|t|) values indicate that the NULL Hypothesis is true due to it's high values.
+# Regression coefficient for After is 1.09, suggesting that an increase of 1% in During is associated with
+# 1.09 increase in After Admission rates.
+# Taken together, the predictor variables account for 99% of the variance in
+# After rates across mental health related admissions.
+# Pr(>|t|) column that the interaction between During and After is
+# significant (the interaction between the predictor values says that the relationship
+# between one predictor and the response variable depends on the level of the
+# other predictor.
+# 12.93 Residual standard error is the average error in predicting Admission rates using this model
+
+plot(H3a_Reg) #evaluate the model fit, it looks like we have 3 outliers, 149, 201, 202
+
+# Goodness of Fit
+AIC(H3a_Reg) # model has the lowest score (preferred model)
+BIC(H3a_Reg)
+
+# Prediction accurate and error rates, when the actual values increase
+# the predicted values also increase and vice-versa
+All_Admissions_predict <- predict(H3a_Reg, H3a)
+prediction <- data.frame(cbind(actuals = H3a$After, predicted = All_Admissions_predict))
+head(prediction)
+
+# Correlation Accuracy
+correlation_accuracy <- cor(prediction)
+correlation_accuracy # 100% correlation accuracy
+
+# Min - max accuracy (Higher the better)
+min_max_accuracy <- mean(apply(prediction, 1, min) / apply(prediction, 1, max))
+min_max_accuracy
+
+# MAPE
+mape <- mean(abs((prediction$predicted - prediction$actuals)) / prediction$actuals)
+mape
+
+# K-Fold Cross-Validation for Linear Regression function
+install.packages("DAAG")
+library(DAAG)
+cvResults <- suppressWarnings(CVlm(data = H3a, form.lm = During ~ After, m = 5, dots = FALSE, seed = 5, legend.pos = "topleft", printit = FALSE, main = "Small symbols=predicted values::bigger ones=actuals."));
+attr(cvResults, 'ms') # dashed lines are parallel, model prediction is accurate because it doesn't vary
+#too much for any one particular sample.
+
+#Global validation of linear model assumption
+install.packages("gvlma")
+library(gvlma)
+gvmodel <- gvlma(fit)
+summary(gvmodel)
 
 
 ##END - PLEASE READ PARAGRAPH BELOW##
